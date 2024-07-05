@@ -42,6 +42,7 @@ import coil.compose.AsyncImage
 import com.lawrence.pokemon.R
 import com.lawrence.pokemon.ui.compose.Screen
 import com.lawrence.pokemon.ui.compose.views.ProgressView
+import com.lawrence.pokemon.ui.ui.theme.Purple80
 import com.lawrence.pokemon.viewModel.MainViewModel
 import com.lawrence.pokemon.viewModel.SharedViewModel
 
@@ -169,9 +170,9 @@ private fun PokemonListItem(
         ) {
             AsyncImage(
                 modifier = Modifier
-                    .size(200.dp)
+                    .size(100.dp)
                     .clip(CircleShape)
-                    .background(Color.White),
+                    .background(Purple80),
                 model = url,
                 contentScale = ContentScale.Crop,
                 contentDescription = null,

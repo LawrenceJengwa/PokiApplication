@@ -71,6 +71,7 @@ dependencies {
     //Hilt
     implementation (libs.hilt.android)
     implementation(libs.hilt.navigation.compose)
+    implementation(libs.androidx.junit.ktx)
     ksp(libs.dagger.compiler)
     ksp(libs.hilt.compiler)
 
@@ -92,6 +93,11 @@ dependencies {
     implementation(libs.coil.compose)
 
     //test
+    testImplementation(libs.mockito)
+    testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.mockk)
+    androidTestImplementation(libs.mockk.android)
+    testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.junit.jupiter)
     annotationProcessor(libs.androidx.room.compiler)
     testImplementation(libs.junit)

@@ -5,8 +5,8 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class PokemonListModel(
-    val count: Int,
-    val next: String?,
-    val previous: String?,
-    val results: List<PokemonItem>
+    val count: Int = 0,
+    val next: String? = null,
+    val previous: String? = null,
+    val results: List<PokemonItem> = listOf()
 ) : Parcelable
