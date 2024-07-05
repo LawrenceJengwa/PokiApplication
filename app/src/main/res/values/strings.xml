@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">PokeAlphaApp</string>
+    <string name="launch_poke">Launch Pokemon</string>
 </resources>

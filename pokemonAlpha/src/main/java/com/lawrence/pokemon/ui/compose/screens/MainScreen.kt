@@ -34,6 +34,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -42,7 +44,7 @@ import coil.compose.AsyncImage
 import com.lawrence.pokemon.R
 import com.lawrence.pokemon.ui.compose.Screen
 import com.lawrence.pokemon.ui.compose.views.ProgressView
-import com.lawrence.pokemon.ui.ui.theme.Purple80
+import com.lawrence.pokemon.ui.ui.theme.LimeYellow
 import com.lawrence.pokemon.viewModel.MainViewModel
 import com.lawrence.pokemon.viewModel.SharedViewModel
 
@@ -94,7 +96,9 @@ fun MainScreen(
                     ) {
                         Text(
                             text = stringResource(id = R.string.main_title),
-                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.Bold,
+                            fontStyle = FontStyle.Italic,
+                            style = MaterialTheme.typography.headlineSmall,
                             modifier = Modifier
                                 .padding(8.dp)
                         )
@@ -112,8 +116,9 @@ fun MainScreen(
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
+                                .padding(2.dp)
                                 .border(
-                                    BorderStroke(3.dp, MaterialTheme.colorScheme.primary),
+                                    BorderStroke(2.dp, LimeYellow),
                                     shape = RoundedCornerShape(
                                         topEnd = 4.dp,
                                         bottomEnd = 4.dp,
@@ -160,19 +165,26 @@ private fun PokemonListItem(
             .clickable(onClick = onClick),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = index, fontSize = 20.sp)
-        Text(text = name, fontSize = 20.sp, modifier = Modifier.padding(start = 16.dp))
+        Text(
+            text = index,
+            fontStyle = FontStyle.Italic,
+            fontSize = 20.sp)
+        Text(
+            text = name,
+            fontSize = 20.sp,
+            fontStyle = FontStyle.Italic,
+            modifier = Modifier.padding(start = 16.dp))
         Box(
             modifier = Modifier
                 .size(60.dp)
                 .weight(1f),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.TopEnd
         ) {
             AsyncImage(
                 modifier = Modifier
                     .size(100.dp)
                     .clip(CircleShape)
-                    .background(Purple80),
+                    .background(LimeYellow),
                 model = url,
                 contentScale = ContentScale.Crop,
                 contentDescription = null,
@@ -182,9 +194,9 @@ private fun PokemonListItem(
         }
     }
     HorizontalDivider(
-        color = MaterialTheme.colorScheme.primary,
+        color = LimeYellow,
         modifier = Modifier
             .padding(16.dp),
-        thickness = 2.dp
+        thickness = 1.dp
     )
 }

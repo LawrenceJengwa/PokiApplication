@@ -11,9 +11,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -24,11 +24,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.lawrence.pokemon.R
 import com.lawrence.pokemon.model.DetailsModel
 import com.lawrence.pokemon.ui.ui.theme.YellowBackground
 import com.lawrence.pokemon.viewModel.SharedViewModel
@@ -48,10 +50,10 @@ fun PokeInfoScreen(
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
-                title = {},
+                title = { stringResource(id = R.string.info_title)},
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = Color.White
+                    containerColor = Color.White,
+                    titleContentColor = Color.Black
                 )
             )
         }
@@ -105,8 +107,8 @@ private fun InfoDetailContent(
                     .fillMaxWidth()
                     .padding(top = 24.dp)
             ) {
-                InfoItem(label = "Weight", value = "${detailsModel.weight} KG")
-                InfoItem(label = "Height", value = "${detailsModel.height} M")
+                InfoItem(label = "Weight", value = detailsModel.weight.toString())
+                InfoItem(label = "Height", value = detailsModel.height.toString())
             }
             Row(
                 horizontalArrangement = Arrangement.SpaceAround,
@@ -115,7 +117,8 @@ private fun InfoDetailContent(
                     .padding(top = 16.dp)
             ) {
                 detailsModel.stat.firstOrNull()?.hitPoints?.let { InfoItem(label = "Hit Points", value = it) }
-                detailsModel.ability.firstOrNull()?.ability?.let { InfoItem(label = "Ability", value = it) }
+                detailsModel.abilities.firstOrNull()?.ability?.name?.let {
+                    InfoItem(label = "Ability", value = it) }
             }
             Row(
                 horizontalArrangement = Arrangement.SpaceAround,
@@ -123,9 +126,17 @@ private fun InfoDetailContent(
                     .fillMaxWidth()
                     .padding(top = 16.dp)
             ) {
-                InfoItem(label = "Combat Power", value = "248,486")
-                InfoItem(label = "Candy", value = "16")
+                detailsModel.moves.firstOrNull()?.move?.name?.let {
+                    InfoItem(label = "Move", value = it)
+                }
+                InfoItem(label = "Species", value = detailsModel.species.name)
             }
+            HorizontalDivider(
+                color = Color.White,
+                modifier = Modifier
+                    .padding(16.dp),
+                thickness = 2.dp
+            )
         }
     }
 }

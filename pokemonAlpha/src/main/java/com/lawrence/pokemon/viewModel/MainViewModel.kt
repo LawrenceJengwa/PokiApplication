@@ -24,11 +24,11 @@ class MainViewModel @Inject constructor(
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery
 
-    private val pokemonList = mutableListOf<PokemonItem>()
-    private val pokemonDetailsMap = mutableMapOf<String, DetailsModel>()
+    val pokemonList = mutableListOf<PokemonItem>()
+    val pokemonDetailsMap = mutableMapOf<String, DetailsModel>()
 
     private val _uiState: MutableStateFlow<ViewState> = MutableStateFlow(ViewState())
-    val uiState: StateFlow<ViewState> = _uiState.asStateFlow()
+    var uiState: StateFlow<ViewState> = _uiState.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -36,7 +36,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getPokemon() {
+    suspend fun getPokemon() {
         repository.fetchPokemonList(OFFSET, LIMIT).collect { result ->
             when (result) {
                 is Result.Loading -> {
@@ -45,8 +45,8 @@ class MainViewModel @Inject constructor(
 
                 is Result.Success -> {
                     pokemonList.addAll(result.data.results)
-                    getDetailsForAllPokemon()
                     _uiState.update { it.copy(isSuccess = true) }
+                    getDetailsForAllPokemon()
                 }
 
                 is Result.Error -> {
@@ -56,7 +56,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getDetailsForAllPokemon() {
+    suspend fun getDetailsForAllPokemon() {
         pokemonList.forEach { pokemon ->
             repository.fetchPokemonDetail(pokemon.name).collect { result ->
                 when (result) {

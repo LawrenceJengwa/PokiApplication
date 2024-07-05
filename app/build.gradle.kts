@@ -76,10 +76,7 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     testImplementation(libs.junit.jupiter)
     annotationProcessor(libs.androidx.room.compiler)
-
-    // To use Kotlin annotation processing tool (kapt)
-    //kapt("androidx.room:room-compiler:2.6.1")
-    // To use Kotlin Symbol Processing (KSP)
+    
     ksp(libs.androidx.room.compiler)
 
     // optional - Kotlin Extensions and Coroutines support for Room
@@ -105,12 +102,7 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.logging.interceptor)
 
-    //paging
-    implementation("androidx.paging:paging-compose:3.2.1")
-    implementation("androidx.paging:paging-runtime-ktx:3.2.1")
-
     //test
-    // MockK
     testImplementation(libs.mockito)
     testImplementation(libs.mockito.kotlin)
     testImplementation(libs.mockk)

@@ -9,10 +9,12 @@ data class DetailsModel(
     @SerializedName("name") val name: String = "",
     @SerializedName("weight") val weight: Int = 0,
     @SerializedName("height") val height: Int = 0,
+    @SerializedName("species") val species: Specie = Specie(),
     @SerializedName("types") val types: List<PokemonDetailsTypeItemModel> = listOf(),
     @SerializedName("sprites") val sprite: PokemonDetailsSpritesModel = PokemonDetailsSpritesModel(),
-    @SerializedName("abilities") val ability: List<PokemonAbilityModel> = listOf(),
-    @SerializedName("stats") val stat: List<PokemonStat> = listOf()
+    @SerializedName("abilities") val abilities: List<PokemonAbilityModel> = listOf(),
+    @SerializedName("stats") val stat: List<PokemonStat> = listOf(),
+    @SerializedName("moves") val moves: List<Moves> = listOf()
 ) : Parcelable
 
 @Parcelize
@@ -33,10 +35,30 @@ data class PokemonDetailsSpritesModel(
 
 @Parcelize
 data class PokemonAbilityModel(
-    @SerializedName("name") val ability: String = ""
+    @SerializedName("ability") val ability: Ability
 ) : Parcelable
 
 @Parcelize
 data class PokemonStat(
     @SerializedName("base_stat") val hitPoints: String = ""
+) : Parcelable
+
+@Parcelize
+data class Ability(
+    @SerializedName("name") val name: String = ""
+) : Parcelable
+
+@Parcelize
+data class Moves(
+    @SerializedName("move") val move: Move
+) : Parcelable
+
+@Parcelize
+data class Move(
+    @SerializedName("name") val name: String = ""
+) : Parcelable
+
+@Parcelize
+data class Specie(
+    @SerializedName("name") val name: String = ""
 ) : Parcelable

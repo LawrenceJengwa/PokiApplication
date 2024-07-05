@@ -28,6 +28,9 @@ android {
                 "proguard-rules.pro"
             )
         }
+        debug {
+           isJniDebuggable = true
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -74,13 +77,6 @@ dependencies {
     implementation(libs.androidx.junit.ktx)
     ksp(libs.dagger.compiler)
     ksp(libs.hilt.compiler)
-
-    implementation(libs.androidx.paging.common.android)
-
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
     
     //room
     implementation(libs.androidx.room.runtime)
@@ -93,6 +89,8 @@ dependencies {
     implementation(libs.coil.compose)
 
     //test
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
     testImplementation(libs.mockito)
     testImplementation(libs.mockito.kotlin)
     testImplementation(libs.mockk)
@@ -101,6 +99,8 @@ dependencies {
     testImplementation(libs.junit.jupiter)
     annotationProcessor(libs.androidx.room.compiler)
     testImplementation(libs.junit)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.ui.test.junit4)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }
