@@ -33,6 +33,7 @@ import coil.compose.AsyncImage
 import com.lawrence.pokemon.R
 import com.lawrence.pokemon.model.DetailsModel
 import com.lawrence.pokemon.ui.ui.theme.YellowBackground
+import com.lawrence.pokemon.utils.divideByTen
 import com.lawrence.pokemon.viewModel.SharedViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -107,8 +108,8 @@ private fun InfoDetailContent(
                     .fillMaxWidth()
                     .padding(top = 24.dp)
             ) {
-                InfoItem(label = "Weight", value = detailsModel.weight.toString())
-                InfoItem(label = "Height", value = detailsModel.height.toString())
+                InfoItem(label = "Weight", value = "${detailsModel.weight.divideByTen()} Kg")
+                InfoItem(label = "Height", value = "${detailsModel.height.divideByTen()} m")
             }
             Row(
                 horizontalArrangement = Arrangement.SpaceAround,

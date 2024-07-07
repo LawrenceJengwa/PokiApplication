@@ -1,5 +1,6 @@
 package com.lawrence.pokemon.viewModel
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.lawrence.pokemon.model.Ability
 import com.lawrence.pokemon.model.DetailsModel
 import com.lawrence.pokemon.model.PokemonAbilityModel
@@ -15,12 +16,14 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.rules.TestRule
+import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.Mock
 import org.mockito.Mockito.anyString
 import org.mockito.Mockito.verify
@@ -29,12 +32,16 @@ import org.mockito.kotlin.whenever
 
 class MainViewModelTest {
 
+    @get:Rule
+    var rule: TestRule = InstantTaskExecutorRule()
+
     @Mock
     private lateinit var repository: PokemonRepository
 
     @Mock
     lateinit var service: PokemonService
 
+    @Mock
     private lateinit var viewModel: MainViewModel
 
     @Mock
@@ -78,10 +85,46 @@ class MainViewModelTest {
         }
     }
 
+    @Test
+    fun `getPokemon should update uiState to loading if loading results`() {
+
+        runBlocking {
+
+            val loadingResult = Result.Loading
+
+            whenever(repository.fetchPokemonList(anyInt(), anyInt())).thenReturn(flow {
+                emit(loadingResult)
+            })
+
+            viewModel.getPokemon()
+
+            verify(repository).fetchPokemonList(anyInt(), anyInt())
+            assert(viewModel.uiState.value.isLoading)
+        }
+    }
+
+    @Test
+    fun `getPokemon should update uiState to Error if service throws error`() {
+
+        runBlocking {
+            val errorResult = Result.Error("An error occurred")
+
+            whenever(repository.fetchPokemonList(anyInt(), anyInt())).thenReturn(flow {
+                emit(errorResult)
+            })
+
+            viewModel.getPokemon()
+
+
+            verify(repository).fetchPokemonList(anyInt(), anyInt())
+            assert(viewModel.uiState.value.isError)
+        }
+    }
+
 
     @Test
     fun `getDetailsForAllPokemon should return success result if service is successful`() {
-        runTest {
+        runBlocking {
             val details = DetailsModel(
                 sprite = PokemonDetailsSpritesModel(imageURL = ""),
                 abilities = listOf(PokemonAbilityModel(Ability("attack")))
@@ -89,9 +132,18 @@ class MainViewModelTest {
 
             viewModel.pokemonList.addAll(
                 listOf(
-                    PokemonItem(name = "bulbasaur", url = ""),
-                    PokemonItem(name = "ivysaur", url = ""),
-                    PokemonItem(name = "venusaur", url = "")
+                    PokemonItem(
+                        name = "bulbasaur",
+                        url = ""
+                    ),
+                    PokemonItem(
+                        name = "ivysaur",
+                        url = ""
+                    ),
+                    PokemonItem(
+                        name = "venusaur",
+                        url = ""
+                    )
                 )
             )
 
@@ -109,6 +161,45 @@ class MainViewModelTest {
     }
 
     @Test
+    fun `getDetailsForAllPokemon should update uiState to loading when fetchPokemonDetail is running`() {
+        runBlocking {
+            val pokemonList = listOf(PokemonItem("Pikachu", "url"))
+            viewModel.pokemonList.addAll(pokemonList)
+
+            val loadingResult = Result.Loading
+
+            whenever(repository.fetchPokemonDetail("Pikachu")).thenReturn(flow { emit(loadingResult) })
+
+            viewModel.getDetailsForAllPokemon()
+
+            verify(repository).fetchPokemonDetail("Pikachu")
+            assert(viewModel.uiState.value.isLoading)
+        }
+    }
+
+    @Test
+    fun `getDetailsForAllPokemon should update uiState to error when fetchPokemonDetail fails`() {
+        runBlocking {
+            val pokemonList = listOf(
+                PokemonItem(
+                    name = "Pikachu",
+                    url = ""
+                )
+            )
+
+            viewModel.pokemonList.addAll(pokemonList)
+            val errorResult = Result.Error("An error occurred")
+
+            whenever(repository.fetchPokemonDetail("Pikachu")).thenReturn(flow { emit(errorResult) })
+
+            viewModel.getDetailsForAllPokemon()
+
+            verify(repository).fetchPokemonDetail("Pikachu")
+            assert(viewModel.uiState.value.isError)
+        }
+    }
+
+    @Test
     fun `onSearchQueryChanged updates search query`() {
         val query = "bulbasaur"
         viewModel.onSearchQueryChanged(query)
@@ -116,10 +207,11 @@ class MainViewModelTest {
     }
 
     @Test
-    fun `getFilteredPokemonList filters by search query`() {
+    fun `getFilteredPokemonList filters and returns match by search query`() {
         val details = DetailsModel(
-            sprite = PokemonDetailsSpritesModel(imageURL = ""),
-            abilities = listOf(PokemonAbilityModel(Ability()))
+            name = "bulbasaur",
+            sprite = PokemonDetailsSpritesModel(imageURL = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png"),
+            abilities = listOf(PokemonAbilityModel(Ability(name = "punch")))
         )
 
         viewModel.pokemonDetailsMap["bulbasaur"] = details
@@ -137,6 +229,31 @@ class MainViewModelTest {
         val filteredList = viewModel.getFilteredPokemonList()
 
         assertEquals(1, filteredList.size)
-        assertEquals("", filteredList[0].name)
+        assertEquals("bulbasaur", filteredList[0].name)
+    }
+
+    @Test
+    fun `getFilteredPokemonList filters and returns empty list if search query does not match any item`() {
+        val details = DetailsModel(
+            name = "bulbasaur",
+            sprite = PokemonDetailsSpritesModel(imageURL = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png"),
+            abilities = listOf(PokemonAbilityModel(Ability(name = "punch")))
+        )
+
+        viewModel.pokemonDetailsMap["bulbasaur"] = details
+        viewModel.pokemonDetailsMap["ivysaur"] = details
+        viewModel.pokemonDetailsMap["venusaur"] = details
+        viewModel.pokemonList.addAll(
+            listOf(
+                PokemonItem(name = "bulbasaur", url = ""),
+                PokemonItem(name = "ivysaur", url = ""),
+                PokemonItem(name = "venusaur", url = "")
+            )
+        )
+
+        viewModel.onSearchQueryChanged("pikachu")
+        val filteredList = viewModel.getFilteredPokemonList()
+
+        assertTrue(filteredList.isEmpty())
     }
 }

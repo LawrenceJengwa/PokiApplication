@@ -115,24 +115,66 @@ class PokemonRepoImplTest {
     }
 
     @Test
-    fun `fetchPokemonDetail should return success if service is successful with data`() = runTest {
-        val name = "bulbasaur"
-        val detailsModel = DetailsModel(
-            name = name,
-            weight = 69,
-            height = 20
-        )
+    fun `fetchPokemonDetail should return success if service is successful with data`() {
+        runTest {
+            val name = "bulbasaur"
+            val detailsModel = DetailsModel(
+                name = name,
+                weight = 69,
+                height = 20
+            )
+            whenever(service.getPokemonDetails(name)).thenReturn(detailsModel)
 
-        val flow = repository.fetchPokemonDetail(name)
-        val results = mutableListOf<Result<DetailsModel>>()
-        flow.collect { result ->
-            results.add(result)
+            val flow = repository.fetchPokemonDetail(name)
+            val results = mutableListOf<Result<DetailsModel>>()
+            flow.collect { result ->
+                results.add(result)
+            }
+
+            verify(service).getPokemonDetails(name)
+
+            assertEquals(2, results.size)
+            assertEquals(Result.Loading, results[0])
+            assertEquals(Result.Success(detailsModel), results[1])
         }
+    }
 
-        verify(service).getPokemonDetails(any())
 
-        assertEquals(2, results.size)
-        assertEquals(Result.Loading, results[0])
-        assertEquals(Result.Success(detailsModel), results[1])
+    @Test
+    fun `fetchPokemonDetail should throw HttpException when there a network error`() {
+        runBlocking {
+            val name = "ivy"
+            val exception = Mockito.mock(HttpException::class.java)
+            whenever(service.getPokemonDetails(name = name)).thenThrow(exception)
+
+            val flow = repository.fetchPokemonDetail(name = name)
+            val values = flow.toList()
+
+            assertEquals(2, values.size)
+            assertEquals(Result.Loading, values[0])
+            assertEquals(Result.Error(exception.message().orEmpty()), values[1])
+        }
+    }
+
+
+    @Test
+    fun `fetchPokemonDetail should throw an IOException and set error message when service fails`() {
+        runBlocking {
+            val name = ""
+            val exception = IOException()
+            val error = "Please check your network connection and try again!"
+
+            whenever(service.getPokemonDetails(name = name)).thenAnswer { throw exception }
+
+            val flow = repository.fetchPokemonDetail(name = name)
+            val values = flow.toList()
+
+            assertEquals(2, values.size)
+            assertEquals(Result.Loading, values[0])
+            assertEquals(
+                Result.Error(errorMessage = error),
+                values[1]
+            )
+        }
     }
 }
