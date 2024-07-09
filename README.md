@@ -18,3 +18,4 @@ This project has a module and main app following MVVM architecture approach with
 + Jetpack Compose navigation
 + SharedStateViewModel.
 + Ktlint
++ added github workflows
