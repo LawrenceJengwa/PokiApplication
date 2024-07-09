@@ -6,7 +6,6 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.lawrence.pokemon.model.DetailsModel
 
-class PokemonStateViewModel: ViewModel() {
-
+class PokemonStateViewModel : ViewModel() {
     var detail by mutableStateOf(DetailsModel())
 }

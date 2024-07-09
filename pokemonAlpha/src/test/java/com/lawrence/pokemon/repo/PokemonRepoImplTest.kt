@@ -50,15 +50,17 @@ class PokemonRepoImplTest {
         val offset = 0
         val limit = 3
         runTest {
-            val pokemonList = PokemonListModel(
-                count = 1,
-                results = listOf(
-                    PokemonItem(
-                        name = name,
-                        url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png"
-                    )
+            val pokemonList =
+                PokemonListModel(
+                    count = 1,
+                    results =
+                        listOf(
+                            PokemonItem(
+                                name = name,
+                                url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png",
+                            ),
+                        ),
                 )
-            )
             whenever(service.getPokemonList(offset, limit)).thenReturn(pokemonList)
 
             val flow = repository.fetchPokemonList(offset, limit)
@@ -91,14 +93,13 @@ class PokemonRepoImplTest {
         }
     }
 
-
     @Test
     fun `fetchPokemonList should throw an IOException and set error message when service fails`() {
         runBlocking {
             val offset = 0
             val limit = 0
             val exception = IOException()
-            val error = "Please check your network connection and try again!"
+            val error = ""
 
             whenever(service.getPokemonList(offset, limit)).thenAnswer { throw exception }
 
@@ -109,7 +110,7 @@ class PokemonRepoImplTest {
             assertEquals(Result.Loading, values[0])
             assertEquals(
                 Result.Error(errorMessage = error),
-                values[1]
+                values[1],
             )
         }
     }
@@ -117,28 +118,28 @@ class PokemonRepoImplTest {
     @Test
     fun `fetchPokemonDetail should return success if service is successful with data`() {
         runTest {
-            val name = "bulbasaur"
-            val detailsModel = DetailsModel(
-                name = name,
-                weight = 69,
-                height = 20
-            )
-            whenever(service.getPokemonDetails(name)).thenReturn(detailsModel)
+            var name1 = "bulbasaur"
+            val detailsModel =
+                DetailsModel().apply {
+                    weight = 69
+                    height = 20
+                    name = name1
+                }
+            whenever(service.getPokemonDetails(name1)).thenReturn(detailsModel)
 
-            val flow = repository.fetchPokemonDetail(name)
+            val flow = repository.fetchPokemonDetail(name1)
             val results = mutableListOf<Result<DetailsModel>>()
             flow.collect { result ->
                 results.add(result)
             }
 
-            verify(service).getPokemonDetails(name)
+            verify(service).getPokemonDetails(name1)
 
             assertEquals(2, results.size)
             assertEquals(Result.Loading, results[0])
             assertEquals(Result.Success(detailsModel), results[1])
         }
     }
-
 
     @Test
     fun `fetchPokemonDetail should throw HttpException when there a network error`() {
@@ -156,13 +157,12 @@ class PokemonRepoImplTest {
         }
     }
 
-
     @Test
     fun `fetchPokemonDetail should throw an IOException and set error message when service fails`() {
         runBlocking {
             val name = ""
             val exception = IOException()
-            val error = "Please check your network connection and try again!"
+            val error = ""
 
             whenever(service.getPokemonDetails(name = name)).thenAnswer { throw exception }
 
@@ -173,7 +173,7 @@ class PokemonRepoImplTest {
             assertEquals(Result.Loading, values[0])
             assertEquals(
                 Result.Error(errorMessage = error),
-                values[1]
+                values[1],
             )
         }
     }

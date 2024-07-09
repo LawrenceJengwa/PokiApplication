@@ -14,7 +14,7 @@ data class DetailsModel(
     @SerializedName("sprites") var sprite: PokemonDetailsSpritesModel,
     @SerializedName("abilities") var abilities: List<PokemonAbilityModel>,
     @SerializedName("stats") var stat: List<PokemonStat>,
-    @SerializedName("moves") var moves: List<Moves>
+    @SerializedName("moves") var moves: List<Moves>,
 ) : Parcelable {
     constructor() : this(
         name = "",
@@ -25,52 +25,52 @@ data class DetailsModel(
         sprite = PokemonDetailsSpritesModel(),
         abilities = listOf(),
         stat = listOf(),
-        moves = listOf()
+        moves = listOf(),
     )
 }
 
 @Parcelize
 data class PokemonDetailsTypeModel(
-    @SerializedName("name") val name: String
+    @SerializedName("name") val name: String,
 ) : Parcelable
 
 @Parcelize
 data class PokemonDetailsTypeItemModel(
     @SerializedName("slot") val slot: Int,
-    @SerializedName("type") val type: PokemonDetailsTypeModel
+    @SerializedName("type") val type: PokemonDetailsTypeModel,
 ) : Parcelable
 
 @Parcelize
 data class PokemonDetailsSpritesModel(
-    @SerializedName("front_default") val imageURL: String = ""
+    @SerializedName("front_default") val imageURL: String = "",
 ) : Parcelable
 
 @Parcelize
 data class PokemonAbilityModel(
-    @SerializedName("ability") val ability: Ability
+    @SerializedName("ability") val ability: Ability,
 ) : Parcelable
 
 @Parcelize
 data class PokemonStat(
-    @SerializedName("base_stat") val hitPoints: String = ""
+    @SerializedName("base_stat") val hitPoints: String = "",
 ) : Parcelable
 
 @Parcelize
 data class Ability(
-    @SerializedName("name") val name: String = ""
+    @SerializedName("name") val name: String = "",
 ) : Parcelable
 
 @Parcelize
 data class Moves(
-    @SerializedName("move") val move: Move
+    @SerializedName("move") val move: Move,
 ) : Parcelable
 
 @Parcelize
 data class Move(
-    @SerializedName("name") val name: String = ""
+    @SerializedName("name") val name: String = "",
 ) : Parcelable
 
 @Parcelize
 data class Specie(
-    @SerializedName("name") val name: String = ""
+    @SerializedName("name") val name: String = "",
 ) : Parcelable

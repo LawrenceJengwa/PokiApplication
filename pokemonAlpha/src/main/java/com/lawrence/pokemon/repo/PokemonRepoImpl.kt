@@ -13,36 +13,38 @@ import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
-class PokemonRepoImpl @Inject constructor(
-    private val service: PokemonService,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-
+class PokemonRepoImpl
+    @Inject
+    constructor(
+        private val service: PokemonService,
+        private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
     ) : PokemonRepository {
-    override suspend fun fetchPokemonList(
-        offset: Int,
-        limit: Int
-    ): Flow<Result<PokemonListModel>> = flow {
-        emit(Result.Loading)
-        try {
-            val result = service.getPokemonList(offset = offset, limit =limit)
-            emit(Result.Success(result))
-        } catch (exception: HttpException) {
-            emit(Result.Error(exception.message.orEmpty()))
-        } catch (exception: IOException) {
-            emit(Result.Error(exception.message.orEmpty()))
-        }
-    }.flowOn(dispatcher)
+        override suspend fun fetchPokemonList(
+            offset: Int,
+            limit: Int,
+        ): Flow<Result<PokemonListModel>> =
+            flow {
+                emit(Result.Loading)
+                try {
+                    val result = service.getPokemonList(offset = offset, limit = limit)
+                    emit(Result.Success(result))
+                } catch (exception: HttpException) {
+                    emit(Result.Error(exception.message.orEmpty()))
+                } catch (exception: IOException) {
+                    emit(Result.Error(exception.message.orEmpty()))
+                }
+            }.flowOn(dispatcher)
 
-    override suspend fun fetchPokemonDetail(name: String) : Flow<Result<DetailsModel>>
-    = flow {
-        emit(Result.Loading)
-        try {
-            val result = service.getPokemonDetails(name =  name)
-            emit(Result.Success(result))
-        } catch (exception: HttpException) {
-            emit(Result.Error(exception.message.orEmpty()))
-        } catch (exception: IOException) {
-            emit(Result.Error(exception.message.orEmpty()))
-        }
-    }.flowOn(dispatcher)
-}
+        override suspend fun fetchPokemonDetail(name: String): Flow<Result<DetailsModel>> =
+            flow {
+                emit(Result.Loading)
+                try {
+                    val result = service.getPokemonDetails(name = name)
+                    emit(Result.Success(result))
+                } catch (exception: HttpException) {
+                    emit(Result.Error(exception.message.orEmpty()))
+                } catch (exception: IOException) {
+                    emit(Result.Error(exception.message.orEmpty()))
+                }
+            }.flowOn(dispatcher)
+    }

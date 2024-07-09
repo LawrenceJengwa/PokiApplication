@@ -38,9 +38,9 @@ import com.lawrence.pokemon.viewModel.PokemonStateViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PokeInfoScreen(
+fun pokeInfoScreen(
     navController: NavController,
-    pokemonStateViewModel: PokemonStateViewModel
+    pokemonStateViewModel: PokemonStateViewModel,
 ) {
     val detail = pokemonStateViewModel.detail
     Scaffold(
@@ -51,112 +51,128 @@ fun PokeInfoScreen(
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
-                title = { Text(text = stringResource(id = R.string.info_title))},
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.White,
-                    titleContentColor = Color.Black
-                )
+                title = { Text(text = stringResource(id = R.string.info_title)) },
+                colors =
+                    TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color.White,
+                        titleContentColor = Color.Black,
+                    ),
             )
-        }
-    ) {
-        innerPadding ->
+        },
+    ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
-            InfoDetailContent(
+            infoDetailContent(
                 imageUrl = detail.sprite.imageURL,
-                detailsModel = detail
-                )
+                detailsModel = detail,
+            )
         }
     }
 }
 
 @Composable
-private fun InfoDetailContent(
+private fun infoDetailContent(
     imageUrl: String,
-    detailsModel: DetailsModel
+    detailsModel: DetailsModel,
 ) {
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(YellowBackground)
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(YellowBackground),
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceEvenly
+            verticalArrangement = Arrangement.SpaceEvenly,
         ) {
             AsyncImage(
                 model = imageUrl,
                 contentDescription = detailsModel.name,
-                modifier = Modifier
-                    .size(200.dp)
-                    .clip(CircleShape)
-                    .background(Color.White),
-                contentScale = ContentScale.Crop
+                modifier =
+                    Modifier
+                        .size(200.dp)
+                        .clip(CircleShape)
+                        .background(Color.White),
+                contentScale = ContentScale.Crop,
             )
             Text(
                 text = detailsModel.name,
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White,
-                modifier = Modifier.padding(top = 16.dp)
+                modifier = Modifier.padding(top = 16.dp),
             )
             Row(
                 horizontalArrangement = Arrangement.SpaceAround,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 24.dp)
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(top = 24.dp),
             ) {
-                InfoItem(label = "Weight", value = "${detailsModel.weight.divideByTen()} Kg")
-                InfoItem(label = "Height", value = "${detailsModel.height.divideByTen()} m")
+                infoItem(label = "Weight", value = "${detailsModel.weight.divideByTen()} Kg")
+                infoItem(label = "Height", value = "${detailsModel.height.divideByTen()} m")
             }
             Row(
                 horizontalArrangement = Arrangement.SpaceAround,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp)
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
             ) {
-                detailsModel.stat.firstOrNull()?.hitPoints?.let { InfoItem(label = "Hit Points", value = it) }
+                detailsModel.stat.firstOrNull()?.hitPoints?.let {
+                    infoItem(
+                        label = "Hit Points",
+                        value = it,
+                    )
+                }
                 detailsModel.abilities.firstOrNull()?.ability?.name?.let {
-                    InfoItem(label = "Ability", value = it) }
+                    infoItem(label = "Ability", value = it)
+                }
             }
             Row(
                 horizontalArrangement = Arrangement.SpaceAround,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp)
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
             ) {
                 detailsModel.moves.firstOrNull()?.move?.name?.let {
-                    InfoItem(label = "Move", value = it)
+                    infoItem(label = "Move", value = it)
                 }
-                InfoItem(label = "Species", value = detailsModel.species.name)
+                infoItem(label = "Species", value = detailsModel.species.name)
             }
             HorizontalDivider(
                 color = Color.White,
-                modifier = Modifier
-                    .padding(16.dp),
-                thickness = 2.dp
+                modifier =
+                    Modifier
+                        .padding(16.dp),
+                thickness = 2.dp,
             )
         }
     }
 }
 
 @Composable
-fun InfoItem(label: String, value: String) {
+fun infoItem(
+    label: String,
+    value: String,
+) {
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
             text = value,
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
-            color = Color.White
+            color = Color.White,
         )
         Text(
             text = label,
             fontSize = 14.sp,
-            color = Color.White
+            color = Color.White,
         )
     }
 }

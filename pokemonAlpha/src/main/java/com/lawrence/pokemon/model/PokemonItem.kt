@@ -7,5 +7,5 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class PokemonItem(
     @SerializedName("name") val name: String,
-    @SerializedName("url") val url: String
-): Parcelable
+    @SerializedName("url") val url: String,
+) : Parcelable

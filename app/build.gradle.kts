@@ -29,7 +29,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -54,7 +54,7 @@ android {
 }
 
 dependencies {
-    //module pokemonAlpha
+
     implementation(project(":pokemonAlpha"))
 
     implementation(libs.androidx.core.ktx)
@@ -71,39 +71,33 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
-    implementation (libs.timber)
+    implementation(libs.timber)
     implementation(libs.androidx.lifecycle.runtime.compose)
-    //room
+
     implementation(libs.androidx.room.runtime)
     testImplementation(libs.junit.jupiter)
     annotationProcessor(libs.androidx.room.compiler)
-    
     ksp(libs.androidx.room.compiler)
 
-    // optional - Kotlin Extensions and Coroutines support for Room
     implementation(libs.androidx.room.ktx)
-    //coil image loader
+
     implementation(libs.coil)
     implementation(libs.coil.compose)
-    //lottie animation
-    implementation (libs.lottie)
-    implementation (libs.lottie.compose)
 
-    //coroutines
+    implementation(libs.lottie)
+    implementation(libs.lottie.compose)
+
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
 
-    //Hilt
-    implementation (libs.hilt.android)
+    implementation(libs.hilt.android)
     implementation(libs.hilt.navigation.compose)
     ksp(libs.dagger.compiler)
     ksp(libs.hilt.compiler)
 
-    //retrofit
     implementation(libs.retrofit)
     implementation(libs.logging.interceptor)
 
-    //test
     testImplementation(libs.mockito)
     testImplementation(libs.mockito.kotlin)
     testImplementation(libs.mockk)

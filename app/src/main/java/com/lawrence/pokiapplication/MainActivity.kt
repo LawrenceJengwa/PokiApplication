@@ -6,7 +6,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,21 +26,27 @@ import androidx.compose.ui.text.font.FontWeight
 import com.lawrence.pokemon.ui.PokeHomeActivity
 import com.lawrence.pokemon.ui.ui.theme.DarkGreen
 import com.lawrence.pokemon.ui.ui.theme.LimeYellow
-import com.lawrence.pokiapplication.ui.theme.PokiApplicationTheme
+import com.lawrence.pokiapplication.ui.theme.pokiApplicationTheme
 
 class MainActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            PokiApplicationTheme {
+            pokiApplicationTheme {
                 Scaffold(
                     topBar = {
-                        PokeAppBar("PokeMon")
+                        pokeAppBar(stringResource(id = R.string.pokemon))
+                    },
+                ) { padding ->
+                    Column(
+                        modifier =
+                            Modifier
+                                .fillMaxSize()
+                                .padding(padding),
+                    ) {
+                        launchPokemonModule()
                     }
-                ) { _ ->
-                    LaunchPokemonModule()
                 }
             }
         }
@@ -46,44 +54,44 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun LaunchPokemonModule() {
+fun launchPokemonModule() {
     val context = LocalContext.current
     Box(
         modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Button(
             onClick = {
                 val intent = Intent(context, PokeHomeActivity::class.java)
                 context.startActivity(intent)
             },
-            colors = ButtonColors(
-                containerColor = LimeYellow,
-                contentColor = Color.Black,
-                disabledContentColor = Color.Gray,
-                disabledContainerColor = Color.Gray
-            )
+            colors =
+                ButtonColors(
+                    containerColor = LimeYellow,
+                    contentColor = Color.Black,
+                    disabledContentColor = Color.Gray,
+                    disabledContainerColor = Color.Gray,
+                ),
         ) {
             Text(
                 text = stringResource(id = R.string.launch_poke),
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             )
         }
-
     }
 }
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PokeAppBar(title: String) {
+fun pokeAppBar(title: String) {
     TopAppBar(
         title = {
             Text(title)
         },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = DarkGreen,
-            titleContentColor = Color.White
-        )
+        colors =
+            TopAppBarDefaults.topAppBarColors(
+                containerColor = DarkGreen,
+                titleContentColor = Color.White,
+            ),
     )
 }

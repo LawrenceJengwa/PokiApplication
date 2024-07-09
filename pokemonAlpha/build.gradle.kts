@@ -26,11 +26,11 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
         debug {
-           isJniDebuggable = true
+            isJniDebuggable = true
         }
     }
     compileOptions {
@@ -70,26 +70,17 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
-    implementation (libs.timber)
+    implementation(libs.timber)
     implementation(libs.androidx.lifecycle.runtime.compose)
-    //Hilt
-    implementation (libs.hilt.android)
+    implementation(libs.hilt.android)
     implementation(libs.hilt.navigation.compose)
     implementation(libs.androidx.junit.ktx)
     ksp(libs.dagger.compiler)
     ksp(libs.hilt.compiler)
-    
-    //room
     implementation(libs.androidx.room.runtime)
-
-    //retrofit
     implementation(libs.logging.interceptor)
-
-    //coil image loader
     implementation(libs.coil)
     implementation(libs.coil.compose)
-
-    //test
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     testImplementation(libs.androidx.core.testing)

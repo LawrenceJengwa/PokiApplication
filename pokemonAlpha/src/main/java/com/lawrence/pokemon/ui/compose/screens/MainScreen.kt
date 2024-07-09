@@ -42,13 +42,12 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.lawrence.pokemon.R
 import com.lawrence.pokemon.ui.compose.Screen
-import com.lawrence.pokemon.ui.compose.views.ProgressView
+import com.lawrence.pokemon.ui.compose.views.progressView
 import com.lawrence.pokemon.ui.ui.theme.LimeYellow
 import com.lawrence.pokemon.viewModel.MainViewModel
 import com.lawrence.pokemon.viewModel.PokemonStateViewModel
@@ -56,10 +55,10 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(
+fun mainScreen(
     navController: NavController,
-    viewModel: MainViewModel = hiltViewModel(),
-    pokemonStateViewModel: PokemonStateViewModel
+    viewModel: MainViewModel,
+    pokemonStateViewModel: PokemonStateViewModel,
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
@@ -73,41 +72,43 @@ fun MainScreen(
                         value = searchQuery,
                         onValueChange = { viewModel.onSearchQueryChanged(it) },
                         placeholder = { Text(stringResource(id = R.string.search_label)) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(MaterialTheme.colorScheme.secondary),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .background(MaterialTheme.colorScheme.secondary),
                         singleLine = true,
-                        maxLines = 1
+                        maxLines = 1,
                     )
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background,
-                )
+                colors =
+                    TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.background,
+                    ),
             )
         },
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
             when {
                 uiState.isLoading -> {
-                    ProgressView()
+                    progressView()
                 }
 
                 uiState.isSuccess -> {
                     Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp)
-                            .background(
-                                color = MaterialTheme.colorScheme.background
-                            )
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp)
+                                .background(
+                                    color = MaterialTheme.colorScheme.background,
+                                ),
                     ) {
                         Text(
                             text = stringResource(id = R.string.main_title),
                             fontWeight = FontWeight.Bold,
                             fontStyle = FontStyle.Italic,
                             style = MaterialTheme.typography.headlineSmall,
-                            modifier = Modifier
-                                .padding(8.dp)
+                            modifier = Modifier.padding(8.dp),
                         )
                     }
                     if (filteredPokemonList.isEmpty()) {
@@ -115,33 +116,37 @@ fun MainScreen(
                             text = stringResource(id = R.string.not_found),
                             style = MaterialTheme.typography.bodyMedium,
                             color = Color.Red,
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .align(Alignment.CenterHorizontally)
+                            modifier =
+                                Modifier
+                                    .padding(16.dp)
+                                    .align(Alignment.CenterHorizontally),
                         )
                     } else {
                         Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(2.dp)
-                                .border(
-                                    BorderStroke(2.dp, LimeYellow),
-                                    shape = RoundedCornerShape(
-                                        topEnd = 4.dp,
-                                        bottomEnd = 4.dp,
-                                        topStart = 4.dp,
-                                        bottomStart = 4.dp
-                                    )
-                                )
+                            modifier =
+                                Modifier
+                                    .fillMaxSize()
+                                    .padding(2.dp)
+                                    .border(
+                                        BorderStroke(2.dp, LimeYellow),
+                                        shape =
+                                            RoundedCornerShape(
+                                                topEnd = 4.dp,
+                                                bottomEnd = 4.dp,
+                                                topStart = 4.dp,
+                                                bottomStart = 4.dp,
+                                            ),
+                                    ),
                         ) {
                             LazyColumn {
                                 items(filteredPokemonList.size) { index ->
                                     val item = filteredPokemonList[index]
-                                    PokemonListItem(
+                                    pokemonListItem(
                                         index = "${index + 1}",
-                                        name = item.name.replaceFirstChar {
-                                            it.titlecase()
-                                        },
+                                        name =
+                                            item.name.replaceFirstChar {
+                                                it.titlecase()
+                                            },
                                         url = item.sprite.imageURL,
                                     ) {
                                         pokemonStateViewModel.detail = item
@@ -152,8 +157,9 @@ fun MainScreen(
                         }
                     }
                 }
+
                 uiState.isError -> {
-                    OnError(viewModel)
+                    onError(viewModel)
                 }
             }
         }
@@ -161,40 +167,45 @@ fun MainScreen(
 }
 
 @Composable
-private fun PokemonListItem(
+private fun pokemonListItem(
     modifier: Modifier = Modifier,
     index: String,
     name: String,
     url: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-            .clickable(onClick = onClick),
-        verticalAlignment = Alignment.CenterVertically
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .clickable(onClick = onClick),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             text = index,
             fontStyle = FontStyle.Italic,
-            fontSize = 20.sp)
+            fontSize = 20.sp,
+        )
         Text(
             text = name,
             fontSize = 20.sp,
             fontStyle = FontStyle.Italic,
-            modifier = Modifier.padding(start = 16.dp))
+            modifier = Modifier.padding(start = 16.dp),
+        )
         Box(
-            modifier = Modifier
-                .size(60.dp)
-                .weight(1f),
-            contentAlignment = Alignment.TopEnd
+            modifier =
+                Modifier
+                    .size(60.dp)
+                    .weight(1f),
+            contentAlignment = Alignment.TopEnd,
         ) {
             AsyncImage(
-                modifier = Modifier
-                    .size(100.dp)
-                    .clip(CircleShape)
-                    .background(LimeYellow),
+                modifier =
+                    Modifier
+                        .size(100.dp)
+                        .clip(CircleShape)
+                        .background(LimeYellow),
                 model = url,
                 contentScale = ContentScale.Crop,
                 contentDescription = null,
@@ -205,27 +216,25 @@ private fun PokemonListItem(
     }
     HorizontalDivider(
         color = LimeYellow,
-        modifier = Modifier
-            .padding(16.dp),
-        thickness = 1.dp
+        modifier = Modifier.padding(16.dp),
+        thickness = 1.dp,
     )
 }
 
 @Composable
-fun OnError(viewModel: MainViewModel) {
-
+fun onError(viewModel: MainViewModel) {
     Text(
-        text = stringResource(id = R.string.service_error), color = Color.Red,
-        modifier = Modifier.padding(bottom = 10.dp), fontSize = 16.sp
+        text = stringResource(id = R.string.service_error),
+        color = Color.Red,
+        modifier = Modifier.padding(bottom = 10.dp),
+        fontSize = 16.sp,
     )
 
-    Button(
-        onClick = {
-            viewModel.viewModelScope.launch {
-                viewModel.getPokemon()
-            }
+    Button(onClick = {
+        viewModel.viewModelScope.launch {
+            viewModel.getPokemon()
         }
-    ) {
+    }) {
         Icon(
             imageVector = Icons.Filled.Refresh,
             contentDescription = stringResource(id = R.string.retry),
