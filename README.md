@@ -12,8 +12,9 @@ This project has a module and main app following MVVM architecture approach with
 + Retrofit (for API Calling).
 + OkHttp
 + Hilt Dependency Injection.
-+ Colt (for Image Loading).
++ Coil (for Image Loading).
 + Kotlin Coroutines.
 + Kotlin Flow
 + Jetpack Compose navigation
-+ SharedViewModel.
++ SharedStateViewModel.
++ Ktlint

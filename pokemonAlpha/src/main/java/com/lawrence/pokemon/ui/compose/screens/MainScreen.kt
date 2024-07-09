@@ -14,8 +14,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -39,6 +43,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.lawrence.pokemon.R
@@ -46,14 +51,15 @@ import com.lawrence.pokemon.ui.compose.Screen
 import com.lawrence.pokemon.ui.compose.views.ProgressView
 import com.lawrence.pokemon.ui.ui.theme.LimeYellow
 import com.lawrence.pokemon.viewModel.MainViewModel
-import com.lawrence.pokemon.viewModel.SharedViewModel
+import com.lawrence.pokemon.viewModel.PokemonStateViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
     navController: NavController,
     viewModel: MainViewModel = hiltViewModel(),
-    sharedViewModel: SharedViewModel
+    pokemonStateViewModel: PokemonStateViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
@@ -92,7 +98,8 @@ fun MainScreen(
                             .fillMaxWidth()
                             .padding(8.dp)
                             .background(
-                                color = MaterialTheme.colorScheme.background)
+                                color = MaterialTheme.colorScheme.background
+                            )
                     ) {
                         Text(
                             text = stringResource(id = R.string.main_title),
@@ -137,13 +144,16 @@ fun MainScreen(
                                         },
                                         url = item.sprite.imageURL,
                                     ) {
-                                        sharedViewModel.detail = item
+                                        pokemonStateViewModel.detail = item
                                         navController.navigate(Screen.Info.route)
                                     }
                                 }
                             }
                         }
                     }
+                }
+                uiState.isError -> {
+                    OnError(viewModel)
                 }
             }
         }
@@ -199,4 +209,32 @@ private fun PokemonListItem(
             .padding(16.dp),
         thickness = 1.dp
     )
+}
+
+@Composable
+fun OnError(viewModel: MainViewModel) {
+
+    Text(
+        text = stringResource(id = R.string.service_error), color = Color.Red,
+        modifier = Modifier.padding(bottom = 10.dp), fontSize = 16.sp
+    )
+
+    Button(
+        onClick = {
+            viewModel.viewModelScope.launch {
+                viewModel.getPokemon()
+            }
+        }
+    ) {
+        Icon(
+            imageVector = Icons.Filled.Refresh,
+            contentDescription = stringResource(id = R.string.retry),
+        )
+        Text(
+            modifier = Modifier.padding(horizontal = 8.dp),
+            style = MaterialTheme.typography.titleMedium,
+            text = stringResource(R.string.retry),
+            fontWeight = FontWeight.Bold,
+        )
+    }
 }

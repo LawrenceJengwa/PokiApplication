@@ -6,4 +6,5 @@ plugins {
     alias(libs.plugins.kotlinParcelize) apply false
     alias(libs.plugins.jetbrainsKotlinKsp) apply false
     alias(libs.plugins.hiltPlugin) apply false
+
 }

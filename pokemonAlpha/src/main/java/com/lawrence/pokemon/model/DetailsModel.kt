@@ -6,16 +6,28 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class DetailsModel(
-    @SerializedName("name") val name: String = "",
-    @SerializedName("weight") val weight: Int = 0,
-    @SerializedName("height") val height: Int = 0,
-    @SerializedName("species") val species: Specie = Specie(),
-    @SerializedName("types") val types: List<PokemonDetailsTypeItemModel> = listOf(),
-    @SerializedName("sprites") val sprite: PokemonDetailsSpritesModel = PokemonDetailsSpritesModel(),
-    @SerializedName("abilities") val abilities: List<PokemonAbilityModel> = listOf(),
-    @SerializedName("stats") val stat: List<PokemonStat> = listOf(),
-    @SerializedName("moves") val moves: List<Moves> = listOf()
-) : Parcelable
+    @SerializedName("name") var name: String,
+    @SerializedName("weight") var weight: Int,
+    @SerializedName("height") var height: Int,
+    @SerializedName("species") var species: Specie,
+    @SerializedName("types") var types: List<PokemonDetailsTypeItemModel>,
+    @SerializedName("sprites") var sprite: PokemonDetailsSpritesModel,
+    @SerializedName("abilities") var abilities: List<PokemonAbilityModel>,
+    @SerializedName("stats") var stat: List<PokemonStat>,
+    @SerializedName("moves") var moves: List<Moves>
+) : Parcelable {
+    constructor() : this(
+        name = "",
+        weight = 0,
+        height = 0,
+        species = Specie(),
+        types = listOf(),
+        sprite = PokemonDetailsSpritesModel(),
+        abilities = listOf(),
+        stat = listOf(),
+        moves = listOf()
+    )
+}
 
 @Parcelize
 data class PokemonDetailsTypeModel(

@@ -59,7 +59,7 @@ class MainViewModelTest {
     fun `getPokemon should return success if fetchPokemonList is successful with data`() {
         runBlocking {
             val offset = 0
-            val limit = 100
+            val limit = 3
             val pokemonList = PokemonListModel(
                 count = 3,
                 results = listOf(
@@ -125,10 +125,7 @@ class MainViewModelTest {
     @Test
     fun `getDetailsForAllPokemon should return success result if service is successful`() {
         runBlocking {
-            val details = DetailsModel(
-                sprite = PokemonDetailsSpritesModel(imageURL = ""),
-                abilities = listOf(PokemonAbilityModel(Ability("attack")))
-            )
+            val details = sampleDetailsModel()
 
             viewModel.pokemonList.addAll(
                 listOf(
@@ -208,11 +205,7 @@ class MainViewModelTest {
 
     @Test
     fun `getFilteredPokemonList filters and returns match by search query`() {
-        val details = DetailsModel(
-            name = "bulbasaur",
-            sprite = PokemonDetailsSpritesModel(imageURL = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png"),
-            abilities = listOf(PokemonAbilityModel(Ability(name = "punch")))
-        )
+        val details = sampleDetailsModel()
 
         viewModel.pokemonDetailsMap["bulbasaur"] = details
         viewModel.pokemonDetailsMap["ivysaur"] = details
@@ -234,11 +227,7 @@ class MainViewModelTest {
 
     @Test
     fun `getFilteredPokemonList filters and returns empty list if search query does not match any item`() {
-        val details = DetailsModel(
-            name = "bulbasaur",
-            sprite = PokemonDetailsSpritesModel(imageURL = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png"),
-            abilities = listOf(PokemonAbilityModel(Ability(name = "punch")))
-        )
+        val details = sampleDetailsModel()
 
         viewModel.pokemonDetailsMap["bulbasaur"] = details
         viewModel.pokemonDetailsMap["ivysaur"] = details
@@ -255,5 +244,13 @@ class MainViewModelTest {
         val filteredList = viewModel.getFilteredPokemonList()
 
         assertTrue(filteredList.isEmpty())
+    }
+
+    private fun sampleDetailsModel(): DetailsModel {
+        return DetailsModel().apply {
+            name = "bulbasaur"
+            sprite = PokemonDetailsSpritesModel(imageURL = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png")
+            abilities = listOf(PokemonAbilityModel(Ability(name = "punch")))
+        }
     }
 }

@@ -34,15 +34,15 @@ import com.lawrence.pokemon.R
 import com.lawrence.pokemon.model.DetailsModel
 import com.lawrence.pokemon.ui.ui.theme.YellowBackground
 import com.lawrence.pokemon.utils.divideByTen
-import com.lawrence.pokemon.viewModel.SharedViewModel
+import com.lawrence.pokemon.viewModel.PokemonStateViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PokeInfoScreen(
     navController: NavController,
-    sharedViewModel: SharedViewModel
+    pokemonStateViewModel: PokemonStateViewModel
 ) {
-    val detail = sharedViewModel.detail
+    val detail = pokemonStateViewModel.detail
     Scaffold(
         topBar = {
             TopAppBar(
@@ -51,7 +51,7 @@ fun PokeInfoScreen(
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
-                title = { stringResource(id = R.string.info_title)},
+                title = { Text(text = stringResource(id = R.string.info_title))},
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.White,
                     titleContentColor = Color.Black

@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import retrofit2.HttpException
-import retrofit2.Response
 import java.io.IOException
 import javax.inject.Inject
 
@@ -30,7 +29,7 @@ class PokemonRepoImpl @Inject constructor(
         } catch (exception: HttpException) {
             emit(Result.Error(exception.message.orEmpty()))
         } catch (exception: IOException) {
-            emit(Result.Error("Please check your network connection and try again!"))
+            emit(Result.Error(exception.message.orEmpty()))
         }
     }.flowOn(dispatcher)
 
@@ -43,7 +42,7 @@ class PokemonRepoImpl @Inject constructor(
         } catch (exception: HttpException) {
             emit(Result.Error(exception.message.orEmpty()))
         } catch (exception: IOException) {
-            emit(Result.Error("Please check your network connection and try again!"))
+            emit(Result.Error(exception.message.orEmpty()))
         }
     }.flowOn(dispatcher)
 }

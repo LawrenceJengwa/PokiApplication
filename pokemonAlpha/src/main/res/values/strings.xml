@@ -3,5 +3,8 @@
     <string name="main_title">Pokémon group</string>
     <string name="search_label">Search Pokémon</string>
     <string name="info_title">Pokémon Information</string>
+    <string name="retry">retry</string>
+    <string name="exception_error">"Please check your network connection and try again!"</string>
+    <string name="service_error">Fetching data failed, try again</string>
     <string name="not_found">No Pokémon found, please refine query.</string>
 </resources>
