@@ -29,12 +29,6 @@ class MainViewModel
         private val _uiState: MutableStateFlow<ViewState> = MutableStateFlow(ViewState())
         var uiState: StateFlow<ViewState> = _uiState.asStateFlow()
 
-        /*init {
-            viewModelScope.launch(dispatcher) {
-                getPokemon()
-            }
-        }*/
-
         suspend fun getPokemon() {
             repository.fetchPokemonList(OFFSET, LIMIT).collect { result ->
                 when (result) {
