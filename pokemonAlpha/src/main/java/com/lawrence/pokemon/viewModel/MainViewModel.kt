@@ -1,6 +1,7 @@
 package com.lawrence.pokemon.viewModel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.lawrence.pokemon.model.DetailsModel
 import com.lawrence.pokemon.model.PokemonItem
 import com.lawrence.pokemon.repo.PokemonRepository
@@ -8,6 +9,7 @@ import com.lawrence.pokemon.utils.Constants.LIMIT
 import com.lawrence.pokemon.utils.Constants.OFFSET
 import com.lawrence.pokemon.utils.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -29,6 +31,20 @@ class MainViewModel
         private val _uiState: MutableStateFlow<ViewState> = MutableStateFlow(ViewState())
         var uiState: StateFlow<ViewState> = _uiState.asStateFlow()
 
+        suspend fun fetchPokemonData() {
+            try {
+                val pokemonFetchJob =
+                    viewModelScope.async {
+                        getPokemon()
+                    }
+                pokemonFetchJob.await()
+
+                getPokemonDetails()
+            } catch (e: Exception) {
+                _uiState.update { it.copy(isError = true) }
+            }
+        }
+
         suspend fun getPokemon() {
             repository.fetchPokemonList(OFFSET, LIMIT).collect { result ->
                 when (result) {
@@ -48,7 +64,7 @@ class MainViewModel
             }
         }
 
-        suspend fun getDetailsForAllPokemon() {
+        suspend fun getPokemonDetails() {
             pokemonList.forEach { pokemon ->
                 repository.fetchPokemonDetail(pokemon.name).collect { result ->
                     when (result) {

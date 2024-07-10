@@ -21,8 +21,7 @@ class PokeHomeActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         viewModel.viewModelScope.launch {
-            viewModel.getPokemon()
-            viewModel.getDetailsForAllPokemon()
+            viewModel.fetchPokemonData()
         }
 
         setContent {

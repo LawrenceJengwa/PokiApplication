@@ -26,6 +26,7 @@ import org.junit.rules.TestRule
 import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.Mock
 import org.mockito.Mockito.anyString
+import org.mockito.Mockito.spy
 import org.mockito.Mockito.verify
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
@@ -41,11 +42,12 @@ class MainViewModelTest {
     @Mock
     lateinit var service: PokemonService
 
-    @Mock
     private lateinit var viewModel: MainViewModel
 
     @Mock
     private var testDispatcher = StandardTestDispatcher()
+
+    private lateinit var spyViewModel: MainViewModel
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Before
@@ -53,6 +55,72 @@ class MainViewModelTest {
         MockitoAnnotations.openMocks(this)
         Dispatchers.setMain(testDispatcher)
         viewModel = MainViewModel(repository)
+        spyViewModel = spy(viewModel)
+    }
+
+    @Test
+    fun `fetchPokemonData  should update uiState with success when getPokemon and fetchPokemonList are successful with data`() {
+        runBlocking {
+            val pokemonList = samplePokemonModel()
+            val pokemonDetails = sampleDetailsModel()
+
+            whenever(repository.fetchPokemonList(anyInt(), anyInt())).thenReturn(
+                flow {
+                    emit(Result.Success(pokemonList))
+                },
+            )
+            whenever(repository.fetchPokemonDetail(anyString())).thenReturn(
+                flow {
+                    emit(Result.Success(pokemonDetails))
+                },
+            )
+
+            spyViewModel.fetchPokemonData()
+
+            val uiState = spyViewModel.uiState.value
+            verify(spyViewModel).getPokemon()
+            verify(spyViewModel).getPokemonDetails()
+            assert(uiState.isSuccess)
+        }
+    }
+
+    @Test
+    fun `fetchPokemonData update uiState with error when fetchPokemonList fails`() {
+        runBlocking {
+            whenever(repository.fetchPokemonList(anyInt(), anyInt())).thenReturn(
+                flow {
+                    emit(Result.Error("Error fetching Pokémon list"))
+                },
+            )
+
+            viewModel.fetchPokemonData()
+
+            val uiState = viewModel.uiState.value
+            assert(uiState.isError)
+        }
+    }
+
+    @Test
+    fun `fetchPokemonData updates uiState to error if fetchPokemonDetail fails `() {
+        runBlocking {
+            val pokemonList = samplePokemonModel()
+
+            whenever(repository.fetchPokemonList(anyInt(), anyInt())).thenReturn(
+                flow {
+                    emit(Result.Success(pokemonList))
+                },
+            )
+            whenever(repository.fetchPokemonDetail(anyString())).thenReturn(
+                flow {
+                    emit(Result.Error("Error fetching Pokémon detail"))
+                },
+            )
+
+            viewModel.fetchPokemonData()
+
+            val uiState = viewModel.uiState.value
+            assert(uiState.isError)
+        }
     }
 
     @Test
@@ -121,7 +189,7 @@ class MainViewModelTest {
     }
 
     @Test
-    fun `getDetailsForAllPokemon should return success result if service is successful`() {
+    fun `getPokemonDetails should return success result if service is successful`() {
         runBlocking {
             val details = sampleDetailsModel()
 
@@ -149,7 +217,7 @@ class MainViewModelTest {
                 },
             )
 
-            viewModel.getDetailsForAllPokemon()
+            viewModel.getPokemonDetails()
 
             assertTrue(viewModel.uiState.value.isSuccess)
             assertEquals(3, viewModel.pokemonDetailsMap.size)
@@ -158,7 +226,7 @@ class MainViewModelTest {
     }
 
     @Test
-    fun `getDetailsForAllPokemon should update uiState to loading when fetchPokemonDetail is running`() {
+    fun `getPokemonDetails should update uiState to loading when fetchPokemonDetail is running`() {
         runBlocking {
             val pokemonList = listOf(PokemonItem("Pikachu", "url"))
             viewModel.pokemonList.addAll(pokemonList)
@@ -167,7 +235,7 @@ class MainViewModelTest {
 
             whenever(repository.fetchPokemonDetail("Pikachu")).thenReturn(flow { emit(loadingResult) })
 
-            viewModel.getDetailsForAllPokemon()
+            viewModel.getPokemonDetails()
 
             verify(repository).fetchPokemonDetail("Pikachu")
             assert(viewModel.uiState.value.isLoading)
@@ -175,7 +243,7 @@ class MainViewModelTest {
     }
 
     @Test
-    fun `getDetailsForAllPokemon should update uiState to error when fetchPokemonDetail fails`() {
+    fun `getPokemonDetails should update uiState to error when fetchPokemonDetail fails`() {
         runBlocking {
             val pokemonList =
                 listOf(
@@ -190,7 +258,7 @@ class MainViewModelTest {
 
             whenever(repository.fetchPokemonDetail("Pikachu")).thenReturn(flow { emit(errorResult) })
 
-            viewModel.getDetailsForAllPokemon()
+            viewModel.getPokemonDetails()
 
             verify(repository).fetchPokemonDetail("Pikachu")
             assert(viewModel.uiState.value.isError)
@@ -254,5 +322,17 @@ class MainViewModelTest {
                 PokemonDetailsSpritesModel(imageURL = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png")
             abilities = listOf(PokemonAbilityModel(Ability(name = "punch")))
         }
+    }
+
+    private fun samplePokemonModel(): PokemonListModel {
+        return PokemonListModel(
+            count = 3,
+            results =
+                listOf(
+                    PokemonItem(name = "bulbasaur", url = ""),
+                    PokemonItem(name = "ivysaur", url = ""),
+                    PokemonItem(name = "venusaur", url = ""),
+                ),
+        )
     }
 }
