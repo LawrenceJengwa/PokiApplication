@@ -6,6 +6,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.lawrence.pokemon.ui.ui.theme.DarkGreen
 
 @Composable
 fun progressView(modifier: Modifier = Modifier) {
@@ -16,6 +17,8 @@ fun progressView(modifier: Modifier = Modifier) {
                 .fillMaxSize()
                 .then(modifier),
     ) {
-        CircularProgressIndicator()
+        CircularProgressIndicator(
+            color = DarkGreen,
+        )
     }
 }
