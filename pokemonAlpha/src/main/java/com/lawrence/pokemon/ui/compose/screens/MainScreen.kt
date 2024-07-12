@@ -47,6 +47,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.lawrence.pokemon.R
 import com.lawrence.pokemon.ui.compose.Screen
+import com.lawrence.pokemon.ui.compose.views.pokeAppBar
 import com.lawrence.pokemon.ui.compose.views.progressView
 import com.lawrence.pokemon.ui.ui.theme.LimeYellow
 import com.lawrence.pokemon.viewModel.MainViewModel
@@ -66,25 +67,41 @@ fun mainScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    TextField(
-                        value = searchQuery,
-                        onValueChange = { viewModel.onSearchQueryChanged(it) },
-                        placeholder = { Text(stringResource(id = R.string.search_label)) },
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .background(MaterialTheme.colorScheme.secondary),
-                        singleLine = true,
-                        maxLines = 1,
+            when {
+                uiState.isLoading -> {
+                    pokeAppBar(
+                        title = stringResource(id = R.string.loading_title),
                     )
-                },
-                colors =
-                    TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.background,
-                    ),
-            )
+                }
+
+                uiState.isError -> {
+                    pokeAppBar(
+                        title = stringResource(id = R.string.error_loading),
+                    )
+                }
+
+                else -> {
+                    TopAppBar(
+                        title = {
+                            TextField(
+                                value = searchQuery,
+                                onValueChange = { viewModel.onSearchQueryChanged(it) },
+                                placeholder = { Text(stringResource(id = R.string.search_label)) },
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .background(MaterialTheme.colorScheme.secondary),
+                                singleLine = true,
+                                maxLines = 1,
+                            )
+                        },
+                        colors =
+                            TopAppBarDefaults.topAppBarColors(
+                                containerColor = MaterialTheme.colorScheme.background,
+                            ),
+                    )
+                }
+            }
         },
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
