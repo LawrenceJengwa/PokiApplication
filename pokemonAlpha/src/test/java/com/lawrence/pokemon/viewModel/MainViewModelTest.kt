@@ -144,11 +144,12 @@ class MainViewModelTest {
             }
             whenever(repository.fetchPokemonList(any(), any())).thenReturn(flow)
 
-            viewModel.getPokemon()
+            spyViewModel.getPokemon()
 
-            val uiState = viewModel.uiState.value
+            val uiState = spyViewModel.uiState.value
 
             verify(repository).fetchPokemonList(anyInt(), anyInt())
+            verify(spyViewModel).populateList(any())
             assertTrue(uiState.isSuccess)
             assertEquals(2, results.size)
         }
@@ -313,6 +314,39 @@ class MainViewModelTest {
         val filteredList = viewModel.getFilteredPokemonList()
 
         assertTrue(filteredList.isEmpty())
+    }
+
+    @Test
+    fun `populateList() should only add items to pokemonList when input list is not empty`() {
+        val pokeList =
+            listOf(
+                PokemonItem(name = "bulbasaur", url = ""),
+                PokemonItem(name = "ivysaur", url = ""),
+            )
+
+        viewModel.populateList(pokeList)
+
+        assertEquals(2, viewModel.pokemonList.size)
+        assertEquals("bulbasaur", viewModel.pokemonList[0].name)
+        assertEquals("ivysaur", viewModel.pokemonList[1].name)
+    }
+
+    @Test
+    fun `populateList() should not add items to pokemonList when input list is empty`() {
+        val pokeList = emptyList<PokemonItem>()
+
+        viewModel.populateList(pokeList)
+
+        assertEquals(0, viewModel.pokemonList.size)
+    }
+
+    @Test
+    fun `populateList() should not add items to pokemonList when input list is null`() {
+        val pokeList: List<PokemonItem>? = null
+
+        viewModel.populateList(pokeList)
+
+        assertEquals(0, viewModel.pokemonList.size)
     }
 
     private fun sampleDetailsModel(): DetailsModel {

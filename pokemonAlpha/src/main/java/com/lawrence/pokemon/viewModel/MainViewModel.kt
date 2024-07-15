@@ -53,7 +53,7 @@ class MainViewModel
                     }
 
                     is Result.Success -> {
-                        pokemonList.addAll(result.data.results)
+                        populateList(result.data.results)
                         _uiState.update { it.copy(isSuccess = true) }
                     }
 
@@ -84,6 +84,12 @@ class MainViewModel
                         }
                     }
                 }
+            }
+        }
+
+        fun populateList(pokeList: List<PokemonItem>?) {
+            pokeList?.takeIf { it.isNotEmpty() }?.let {
+                pokemonList.addAll(it)
             }
         }
 
